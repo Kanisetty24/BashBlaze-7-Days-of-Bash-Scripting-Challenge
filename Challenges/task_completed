@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Function to read and display the menu from menu.txt file
+function display_menu() {
+    echo "Welcome to the Restaurant!"
+    echo "Menu:"
+	read ./menu.txt
+    awk '{print NR,".",$1, "-", "₹" $2}' menu.txt
+       
+}
+
+# Function to calculate the total bill
+function calculate_total_bill() {
+    local total=0
+   local price
+    for item_number in "${!order[@]}"; do
+        price=$(grep "^$item_number\." menu.txt | awk -F ' - ₹' '{print $2}')
+        if [ -z "$price" ]; then
+            echo "Invalid item number: $item_number"
+            exit 1
+        fi
+        total=$((total + price * order[$item_number]))
+    done
+    echo "$total"
+}
+
+# Function to handle invalid user input
+function handle_invalid_input() {
+    echo "Invalid input! Please enter a valid item number and quantity."
+}
+
+# Main script
+display_menu
+
+# Ask for the customer's name
+echo "May i know your name please "
+read customer_name
+
+# Ask for the order
+echo "Please enter the item number and quantity (e.g., 1 2 for two Burgers):"
+read -a input_order
+
+# Process the customer's order
+declare -A order
+for (( i=0; i<${#input_order[@]}; i+=2 )); do
+    item_number="${input_order[i]}"
+    quantity="${input_order[i+1]}"
+	if ! grep -q "^$item_number\." ./menu.txt || ! [[ "$quantity" =~ ^[0-9]+$ ]]; then
+        echo "Invalid input! Please enter a valid item number and quantity."
+        exit 1
+    fi
+	 order["$item_number"]=$quantity
+
+done
+
+
+# Calculate the total bill
+total_bill=$(calculate_total_bill)
+
+# Display the total bill with a personalized thank-you message
+
+echo "Thank you, $customer_name! Your total bill is ₹$total_bill."
