@@ -23,6 +23,6 @@ if [ -n "$path" ]; then
   echo "The absolute path of the file '$target_file' is: $path"
   exit 0
 else
-  echo "File not found: target_file"
+  echo "File not found: $target_file"
   exit 1
 fi
