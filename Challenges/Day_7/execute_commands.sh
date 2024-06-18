@@ -10,14 +10,29 @@ execute_remote_commands() {
     local host="$2"
 
     echo "Executing commands on $user@$host..."
+    
+    # Execute 'uptime' command
     echo "Uptime:"
     ssh "$user@$host" uptime
+    if [ $? -ne 0 ]; then
+        echo "Failed to execute 'uptime' on $user@$host"
+    fi
     echo ""
+    
+    # Execute 'uname -a' command
     echo "System Information:"
     ssh "$user@$host" uname -a
+    if [ $? -ne 0 ]; then
+        echo "Failed to execute 'uname -a' on $user@$host"
+    fi
     echo ""
+    
+    # Execute 'date' command
     echo "Current Date and Time:"
     ssh "$user@$host" date
+    if [ $? -ne 0 ]; then
+        echo "Failed to execute 'date' on $user@$host"
+    fi
     echo ""
 }
 
